@@ -18,6 +18,15 @@ $ curl http://localhost:9000/peerjs | jq
 3. `client/local_client_1.html` を別ブラウザで開くことで、ブラウザ間での接続が確立される
 4. 相互にメッセージ送受信可能であることを確認する
 
+## [Azure] Bicep適用方法
+
+```bash
+$ az deployment group create \
+--resource-group {リソースグループ名} \
+--template-file peerjs-server.bicep \
+--parameters namespace=peerjs-server-demo
+```
+
 ## [Azure] WebRTC通信方法
 
 1. Bicepを適用し、Azure App Service を作成する
