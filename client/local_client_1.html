@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client1</title>
+  <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+  <script>
+    const peer = new Peer('client1', {
+      host: 'localhost',
+      port: 9000,
+      path: '/peerjs',
+      debug: 2
+    });
+
+    let connection;
+    peer.on('open', () => {
+      console.log('Peer open, attempting connection...');
+      const conn = peer.connect('client2');
+      conn.on('open', () => {
+        console.log('client2に接続できました。');
+        connection = conn;
+      });
+      conn.on('data', data => {
+        console.log('受信したデータ:', data);
+        displayReceivedMessage(data);
+      });
+    });
+
+    function send_message() {
+      const messageInput = document.getElementById('messageInput');
+      const message = messageInput.value;
+
+      if (connection && message.trim() !== '') {
+        connection.send(message);
+        console.log('送信したメッセージ:', message);
+        displaySentMessage(message);
+        messageInput.value = ''; // 入力欄をクリア
+      } else if (!connection) {
+        console.log('接続が確立されていません');
+      } else {
+        console.log('メッセージが空です');
+      }
+    }
+
+    function displaySentMessage(message) {
+      const sentMessages = document.getElementById('sentMessages');
+      const messageElement = document.createElement('div');
+      messageElement.textContent = message;
+      sentMessages.appendChild(messageElement);
+    }
+
+    function displayReceivedMessage(message) {
+      const receivedMessages = document.getElementById('receivedMessages');
+      const messageElement = document.createElement('div');
+      messageElement.textContent = message;
+      receivedMessages.appendChild(messageElement);
+    }
+  </script>
+</head>
+<body>
+  <h1>Client1</h1>
+  <input type="text" id="messageInput" placeholder="メッセージを入力">
+  <input type="button" value="送信" onclick="send_message()">
+  <h3>Client2へ送信したメッセージ</h3>
+  <div id="sentMessages" style="border: 1px solid #ccc; padding: 10px; height: 150px; overflow-y: auto; background-color: #f9f9f9;"></div>
+  <h3>Client2から受信したメッセージ</h3>
+  <div id="receivedMessages" style="border: 1px solid #ccc; padding: 10px; height: 150px; overflow-y: auto; background-color: #e8f5e8;"></div>
+</body>
+</html>
