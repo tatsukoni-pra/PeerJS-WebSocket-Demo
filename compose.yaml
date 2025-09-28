@@ -1,0 +1,12 @@
+services:
+  peerjs-server:
+    image: peerjs/peerjs-server:0.6.1
+    platform: linux/amd64
+    ports:
+      - 9000:9000
+    command: [
+      "--port", "9000",
+      "--path", "/peerjs",
+      "--concurrent_limit", "10000",
+      "--allow_discovery", "true",
+    ]
